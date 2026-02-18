@@ -27,10 +27,10 @@
 ## 界面预览
 
 ### 指数页面
-![指数页面](img1.png)
+![指数页面](chrome-extension/img1.png)
 
 ### 温度页面
-![温度页面](img2.png)
+![温度页面](chrome-extension/img2.png)
 
 ## 安装方法
 
