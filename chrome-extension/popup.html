@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行情助手</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 400px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      padding: 15px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .status-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .status {
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .trading {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .closed {
+      background-color: #9E9E9E;
+      color: white;
+    }
+    .update-btn {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .update-btn:hover {
+      background-color: #1976D2;
+    }
+    .update-btn:disabled {
+      background-color: #BDBDBD;
+      cursor: not-allowed;
+    }
+    .last-update {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .data-container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .data-section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+    .data-item {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    .data-label {
+      width: 120px;
+      font-size: 14px;
+      color: #666;
+    }
+    .data-value {
+      font-size: 14px;
+      color: #333;
+      flex: 1;
+    }
+    .timestamp {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      margin-top: 15px;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    .error-container {
+      background-color: #ffebee;
+      color: #c62828;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    .index-section {
+      margin-bottom: 20px;
+    }
+    .index-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .index-card {
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      border: 1px solid #e0e0e0;
+      min-height: 80px;
+    }
+    .index-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .index-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .index-name {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+    .index-code {
+      font-size: 12px;
+      color: #666;
+    }
+    .index-value {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #667eea;
+    }
+    .index-change {
+      font-size: 12px;
+    }
+    .index-change.up {
+      color: #ef5350;
+    }
+    .index-change.down {
+      color: #26a69a;
+    }
+    .index-change.flat {
+      color: #666;
+    }
+    .jisilu-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .jisilu-card {
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      border: 1px solid #e0e0e0;
+    }
+    .jisilu-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .jisilu-card.stock-card {
+      border-left: 4px solid #2196F3;
+    }
+    .jisilu-card.cb-card {
+      border-left: 4px solid #FF9800;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .card-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 4px;
+    }
+    .card-subtitle {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 12px;
+    }
+    .card-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label {
+      font-size: 12px;
+      color: #666;
+      font-weight: 500;
+    }
+    .detail-value {
+      font-size: 12px;
+      color: #333;
+      font-weight: 600;
+    }
+    .detail-value.temp {
+      color: #FF5722;
+    }
+    .detail-value.up {
+      color: #ef5350;
+    }
+    .detail-value.down {
+      color: #26a69a;
+    }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 0 15px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: #e0e0e0;
+      color: #666;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .tab-btn:hover {
+      background: #d0d0d0;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    #jisilu-data-container {
+      display: block;
+      width: 100%;
+    }
+    .jisilu-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>行情助手</h2>
+    </div>
+    
+    <div class="status-container">
+      <div id="status" class="status"></div>
+      <button id="update-btn" class="update-btn">手动更新数据</button>
+    </div>
+    
+    <div class="last-update" id="last-update"></div>
+    
+    <div id="error-container" class="error-container"></div>
+    
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="index">指数</button>
+      <button class="tab-btn" data-tab="temperature">温度</button>
+    </div>
+    
+    <div id="data-container" class="data-container">
+      <div class="tab-content active" id="index-tab">
+        <div class="index-section">
+          <div class="section-title">指数行情</div>
+          <div class="index-cards" id="index-cards">
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">上证指数</span>
+              <span class="index-code">000001</span>
+            </div>
+            <div class="index-value" id="sh-value">--</div>
+            <div class="index-change" id="sh-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">深证成指</span>
+              <span class="index-code">399001</span>
+            </div>
+            <div class="index-value" id="sz-value">--</div>
+            <div class="index-change" id="sz-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">创业板指</span>
+              <span class="index-code">399006</span>
+            </div>
+            <div class="index-value" id="cyb-value">--</div>
+            <div class="index-change" id="cyb-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">科创50</span>
+              <span class="index-code">000688</span>
+            </div>
+            <div class="index-value" id="kc50-value">--</div>
+            <div class="index-change" id="kc50-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">北证50</span>
+              <span class="index-code">899050</span>
+            </div>
+            <div class="index-value" id="bz50-value">--</div>
+            <div class="index-change" id="bz50-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">沪深300</span>
+              <span class="index-code">000300</span>
+            </div>
+            <div class="index-value" id="hs300-value">--</div>
+            <div class="index-change" id="hs300-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">恒生指数</span>
+              <span class="index-code">HSI</span>
+            </div>
+            <div class="index-value" id="hsi-value">--</div>
+            <div class="index-change" id="hsi-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">国企指数</span>
+              <span class="index-code">HSCEI</span>
+            </div>
+            <div class="index-value" id="hscei-value">--</div>
+            <div class="index-change" id="hscei-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">恒生科技</span>
+              <span class="index-code">HSTECH</span>
+            </div>
+            <div class="index-value" id="hstech-value">--</div>
+            <div class="index-change" id="hstech-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">道琼斯</span>
+              <span class="index-code">DJI</span>
+            </div>
+            <div class="index-value" id="dji-value">--</div>
+            <div class="index-change" id="dji-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">纳斯达克</span>
+              <span class="index-code">NASDAQ</span>
+            </div>
+            <div class="index-value" id="nasdaq-value">--</div>
+            <div class="index-change" id="nasdaq-change">--</div>
+          </div>
+          <div class="index-card">
+            <div class="index-header">
+              <span class="index-name">标普500</span>
+              <span class="index-code">SPX</span>
+            </div>
+            <div class="index-value" id="sp500-value">--</div>
+            <div class="index-change" id="sp500-change">--</div>
+          </div>
+        </div>
+      </div>
+      </div>
+      
+      <div class="tab-content" id="temperature-tab">
+        <div class="index-section">
+          <div class="section-title">市场温度</div>
+          <div id="jisilu-data-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

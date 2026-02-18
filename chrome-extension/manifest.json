@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "行情助手",
+  "version": "1.0",
+  "description": "实时监控股票指数、集思录市场数据",
+  "permissions": [
+    "alarms",
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.jisilu.cn/*",
+    "http://www.jisilu.cn/*",
+    "https://qt.gtimg.cn/*",
+    "http://qt.gtimg.cn/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.jisilu.cn/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/*",
+        "index.html",
+        "index.css",
+        "index.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
